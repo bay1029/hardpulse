@@ -1,0 +1,23 @@
+spring:
+  kafka:
+    bootstrap-servers: localhost:9092
+    properties:
+      enable.idempotence: true
+      acks: all
+      compression.type: zstd
+      linger.ms: 30
+      batch.size: 131072
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+app:
+  socket:
+    host: localhost
+    port: 7001
+  topics:
+    telemetryRaw: telemetry.raw
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus

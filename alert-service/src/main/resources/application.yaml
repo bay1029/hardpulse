@@ -1,0 +1,26 @@
+spring:
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: alert-service-v1
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "*"
+    listener:
+      ack-mode: record
+app:
+  thresholds:
+    cpuTempC: 80.0
+    gpuTempC: 80.0
+    cpuLoadPct: 90.0
+    diskUsedPct: 90.0
+    voltageMin: 10.5
+  topics:
+    in: telemetry.raw
+    alerts: telemetry.alerts
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
