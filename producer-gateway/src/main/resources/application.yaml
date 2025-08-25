@@ -1,12 +1,17 @@
+bootstrap:
+  servers: localhost:9093
+server:
+  port: 8888
 spring:
   kafka:
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: localhost:9093
     properties:
       enable.idempotence: true
       acks: all
       compression.type: zstd
       linger.ms: 30
       batch.size: 131072
+      spring.json.add.type.headers: false
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer

@@ -1,0 +1,5 @@
+# delete topic
+#./bin/kafka-topics.sh --bootstrap-servers localhost:9093 --delete --topic 'topic-.*'
+
+# delete topic
+docker compose exec kafka kafka-topics.sh --bootstrap-server localhost:9093 --delete --topic 'telemetry.raw'

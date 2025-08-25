@@ -6,8 +6,10 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.core.KafkaTemplate;
-import reactor.core.publisher.Mono;
-import reactor.netty.tcp.TcpClient;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.Socket;
 
 @Configuration
 class ProducerConfig {
@@ -17,13 +19,24 @@ class ProducerConfig {
 
   @Bean
   ApplicationRunner runner(KafkaTemplate<String, Telemetry> kafka, ObjectMapper om) {
-    return args -> TcpClient.create()
-      .host(host).port(port)
-      .handle((in,out) -> in.receive().asString()
-        .flatMap(line -> Mono.fromCallable(() -> om.readValue(line, Telemetry.class)))
-        .doOnNext(t -> kafka.send(topic, t.deviceId(), t))
-        .then())
-      .connect()
-      .subscribe();
+    return args -> {
+      try (Socket socket = new Socket(host, port);
+           BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
+
+        String line;
+        while ((line = reader.readLine()) != null) {
+          try {
+            Telemetry telemetry = om.readValue(line, Telemetry.class);
+            kafka.send(topic, telemetry.deviceId(), telemetry);
+          } catch (Exception e) {
+            // Log error and continue processing next line
+            System.err.println("Error processing telemetry: " + e.getMessage());
+          }
+        }
+      } catch (Exception e) {
+        // Log connection or reading error
+        System.err.println("Connection error: " + e.getMessage());
+      }
+    };
   }
 }

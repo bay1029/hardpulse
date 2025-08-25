@@ -3,6 +3,7 @@ const PORT = process.env.EMULATOR_PORT ? parseInt(process.env.EMULATOR_PORT) : 7
 const DEVICES = (process.env.DEVICES || "gpu-01,gpu-02,gpu-03,gpu-04").split(",");
 function sample() {
   const d = DEVICES[Math.floor(Math.random()*DEVICES.length)];
+  console.log(`sending...`)
   return JSON.stringify({
     schemaVersion: 1, deviceId: d, ts: new Date().toISOString(),
     metrics: { cpuTempC: 50 + Math.random()*50, gpuTempC: 45 + Math.random()*50,

@@ -1,12 +1,17 @@
+bootstrap:
+  servers: localhost:9093
+server:
+  port: 8889
 spring:
   kafka:
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: localhost:9093
     consumer:
       group-id: log-writer-service-v1
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
       properties:
         spring.json.trusted.packages: "*"
+        spring.json.value.default.type: com.example.logwriterservice.Telemetry
     listener:
       ack-mode: record
 app:
